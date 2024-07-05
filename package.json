@@ -18,5 +18,10 @@
         "vite": "^5.0",
         "vue": "^3.4.0",
         "vue-tsc": "^2.0.24"
+    },
+    "dependencies": {
+        "flowbite": "^2.4.1",
+        "flowbite-vue": "^0.1.5",
+        "sweetalert2": "^11.11.0"
     }
 }
