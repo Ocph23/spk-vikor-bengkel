@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class KriteriaRequest extends FormRequest
+class AlternatifRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +23,8 @@ class KriteriaRequest extends FormRequest
     {
         return [
             'nama'=> 'required',
-            'variabel'=> 'required',
-            'keterangan'=> '',
+            'alamat'=> 'required',
+            'jenis_kelamin'=> 'required',
         ];
     }
 }

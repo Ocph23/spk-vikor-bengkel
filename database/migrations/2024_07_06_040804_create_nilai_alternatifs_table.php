@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('alternatifs', function (Blueprint $table) {
+        Schema::create('nilai_alternatifs', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
-            $table->enum('jenis_kelamin',['L', 'P'])->default('L');
-            $table->string('alamat');
+            $table->foreignId('periode_id');
+            $table->foreignId('alternatif_id');
+            $table->foreignId('kriteria_id');
+            $table->foreignId('sub_kriteria_id');
         });
     }
 
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('alternatifs');
+        Schema::dropIfExists('nilai_alternatifs');
     }
 };

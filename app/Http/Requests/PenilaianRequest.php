@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class KriteriaRequest extends FormRequest
+class PenilaianRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,9 +22,8 @@ class KriteriaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nama'=> 'required',
-            'variabel'=> 'required',
-            'keterangan'=> '',
+            'periode'=> 'required',
+            'penilaian'=> 'required',
         ];
     }
 }

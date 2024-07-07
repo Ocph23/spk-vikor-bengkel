@@ -29,7 +29,7 @@ const props = defineProps({
 
 const tambahAction = () => {
     // isShowModal.value = true;
-    window.location.href = '/kriteria/create'
+    window.location.href = '/periode/create'
 
 }
 
@@ -49,7 +49,7 @@ function deleteItem(item: any) {
         confirmButtonText: "Yes, delete it!"
     }).then((result) => {
         if (result.isConfirmed) {
-            form.delete(route('kriteria.delete', item.id), {
+            form.delete(route('periode.delete', item.id), {
                 onSuccess: (res) => {
                     Swal.fire({
                         title: "Deleted!",
@@ -57,22 +57,17 @@ function deleteItem(item: any) {
                         icon: "success"
                     });
 
-                }, onError: (err) => {
+                }, onError: (err:any) => {
                     Swal.fire({
                         title: "Error",
-                        text: err,
+                        text: err.message,
                         icon: "error"
                     });
                 }
             })
-
-
         }
     });
 }
-
-
-
 
 </script>
 
@@ -85,16 +80,16 @@ function deleteItem(item: any) {
         </template>
         <div class="py-6 max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="my-5 flex justify-between">
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">DATA KRITERIA</h2>
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">DATA PERIODE</h2>
                 <fwb-button @click="tambahAction" color="green">Tambah</fwb-button>
             </div>
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <fwb-table>
                     <fwb-table-head>
                         <fwb-table-head-cell>No</fwb-table-head-cell>
-                        <fwb-table-head-cell>Nama Kriteria</fwb-table-head-cell>
-                        <fwb-table-head-cell>Variabel</fwb-table-head-cell>
+                        <fwb-table-head-cell>Nama Periode </fwb-table-head-cell>
                         <fwb-table-head-cell>Keterangan</fwb-table-head-cell>
+                        <fwb-table-head-cell>Status Aktif</fwb-table-head-cell>
                         <fwb-table-head-cell>
                             <span class="sr-only">Action</span>
                         </fwb-table-head-cell>
@@ -103,11 +98,11 @@ function deleteItem(item: any) {
                         <fwb-table-row v-for="(item, index) in data">
                             <fwb-table-cell>{{ index + 1 }}</fwb-table-cell>
                             <fwb-table-cell>{{ item.nama }}</fwb-table-cell>
-                            <fwb-table-cell>{{ item.variabel }}</fwb-table-cell>
                             <fwb-table-cell>{{ item.keterangan }}</fwb-table-cell>
+                            <fwb-table-cell>{{ item.status? 'Aktif' : 'Tidak Aktif' }}</fwb-table-cell>
                             <fwb-table-cell>
-                              <div class="flex justify-end space-x-2">
-                                <fwb-button :href="route('kriteria.edit', item.id)" color="yellow" square>
+                              <div class="flex space-x-2 justify-end">
+                                <fwb-button :href="route('periode.edit', item.id)" color="yellow" square>
                                   <IconEdit />
                                 </fwb-button>
                                 <fwb-button @click="deleteItem(item)" color="red" square>

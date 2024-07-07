@@ -81,7 +81,7 @@ function showModal(param: any) {
             nama: '',
             kriteria_id: kriteriaId.value,
             keterangan: '',
-            bobot: '',
+            bobot: 0,
         };
     }
     isShowModal.value = true
@@ -202,7 +202,7 @@ function deleteItem(item: any) {
                             <fwb-table-cell>{{ item.keterangan }}</fwb-table-cell>
                             <fwb-table-cell>{{ item.bobot }}</fwb-table-cell>
                             <fwb-table-cell>
-                                <div class="flex space-x-2">
+                                <div class="flex space-x-2 justify-end">
                                     <fwb-button @click="showModal(item)" color="yellow" square>
                                         <IconEdit />
                                     </fwb-button>
@@ -219,19 +219,17 @@ function deleteItem(item: any) {
 
         <fwb-modal persistent v-if="isShowModal" @close="closeModal">
             <template #header>
-                <div class="flex items-center text-lg">
-                    Terms of Service
-                </div>
+                <div class=" mb-8 flex items-center text-lg">
+                        Tambah/Edit Kriteria
+                    </div>
             </template>
             <template #body>
                 <div class="p-6 bg-white border-b border-gray-200">
-                    <div class=" mb-8 flex items-center text-lg">
-                        Tambah/Edit Kriteria
-                    </div>
+                   
                     <form>
                         <div class="mb-6">
-                            <fwb-input :disabled="isBusy" v-model="form.nama" required placeholder="Kriteria"
-                                label="Nama Kriteria" />
+                            <fwb-input :disabled="isBusy" v-model="form.nama" required placeholder="Sub Kriteria"
+                                label="Nama Sub Kriteria" />
                             <InputError :message="form.errors ? form.errors['nama'] : ''" />
                         </div>
                         <div class="mb-6">

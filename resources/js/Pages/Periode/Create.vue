@@ -1,4 +1,4 @@
-<!-- <script setup lang="ts">
+<script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { defineProps, onMounted, ref } from 'vue';
@@ -15,7 +15,8 @@ import {
     FwbButton,
     FwbModal,
     FwbInput,
-    FwbTextarea
+    FwbTextarea,
+    FwbSelect
 } from 'flowbite-vue'
 
 const isBusy = ref(false)
@@ -23,7 +24,6 @@ const isBusy = ref(false)
 const form = useForm({
     id: 0,
     nama: '',
-    variabel: '',
     keterangan: ''
 })
 
@@ -34,11 +34,22 @@ const props = defineProps({
     }
 })
 
+const genderOptions = [
+    {
+        value: "L",
+        name: "Laki-laki"
+    },
+    {
+        value: 'P',
+        name: 'Perempuan'
+    }
+]
+
+
 
 onMounted(() => {
     form.id = props.data.id
     form.nama = props.data.nama
-    form.variabel = props.data.variabel
     form.keterangan = props.data.keterangan
 })
 
@@ -47,7 +58,7 @@ onMounted(() => {
 const saveAction = () => {
     console.log('test');
     if (form.id <= 0 || form.id == undefined) {
-        form.post(route('kriteria.store'), {
+        form.post(route('periode.store'), {
             onSuccess: (res) => {
                 Swal.fire({
                     position: "top-end",
@@ -74,7 +85,7 @@ const saveAction = () => {
             }
         });
     } else {
-        form.put(route('kriteria.update', form.id), {
+        form.put(route('periode.update', form.id), {
             onSuccess: (res) => {
                 Swal.fire({
                     position: "top-end",
@@ -103,7 +114,7 @@ const saveAction = () => {
 
 const backAction = () => {
     console.log('test');
-    window.location.href = '/subkriteria'
+    window.location.href = '/periode'
 }
 
 
@@ -112,25 +123,21 @@ const backAction = () => {
 
 <template>
 
-    <Head title="Kriteria" />
+    <Head title="periode" />
     <AuthenticatedLayout>
         <div class="py-6 max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <div class=" mb-8 flex items-center text-lg">
-                        Tambah/Edit Sub Kriteria
+                        Tambah/Edit periode
                     </div>
                     <form >
                         <div class="mb-6">
-                            <fwb-input :disabled="isBusy" v-model="form.nama" required placeholder="Kriteria" label="Nama Kriteria" />
+                            <fwb-input :disabled="isBusy" v-model="form.nama" label="Nama" name="Nama" />
                             <InputError :message="form.errors['nama']" />
                         </div>
                         <div class="mb-6">
-                            <fwb-input :disabled="isBusy" v-model="form.variabel" placeholder="Variable" label="Variabel" />
-                            <InputError :message="form.errors['variabel']" />
-                        </div>
-                        <div class="mb-6">
-                            <FwbTextarea v-model="form.keterangan" placeholder="Keterangan" label="Keterangan" />
+                            <FwbTextarea v-model="form.keterangan" label="Keterangan" placeholder="Keterangan" name="keterangan " />
                             <InputError :message="form.errors['keterangan']" />
                         </div>
                     </form>
@@ -149,4 +156,4 @@ const backAction = () => {
 
 
     </AuthenticatedLayout>
-</template> -->
+</template>

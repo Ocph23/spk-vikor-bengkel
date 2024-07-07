@@ -26,6 +26,7 @@ import IconSave from "./IconSave.vue";
 import IconGear from "./IconGear.vue";
 import IconDoubleCheck from "./IconDoubleCheck.vue";
 import IconTime from "./IconTime.vue";
+import IconCalendar from "./IconCalendar.vue";
 
 
 export const VTCheckIcon = IconCheck;
@@ -56,3 +57,4 @@ export const VTSaveIcon = IconSave;
 export const VTSettingIcon = IconGear;
 export const VTDoubleCheckIcon = IconDoubleCheck;
 export const VTTimeIcon = IconTime;
+export const VTCalendarIcon = IconCalendar;

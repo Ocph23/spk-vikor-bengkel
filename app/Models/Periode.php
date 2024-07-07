@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Kriteria extends Model
+class Periode extends Model
 {
     use HasFactory;
 
@@ -14,14 +14,7 @@ class Kriteria extends Model
     public $fillable =[
         'id',
         'nama',
-        'variabel',
-        'bobot',
         'keterangan',
+        'status',
     ];
-
-    public function subkriteria()
-    {
-        return $this->hasMany(SubKriteria::class);
-    }
-
 }

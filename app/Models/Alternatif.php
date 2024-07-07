@@ -11,10 +11,21 @@ class Alternatif extends Model
 
     public $timestamps = false;
     
-    private $fillable =[
+    public $fillable =[
         'id',
         'nama',
         'jenis_kelamin',
         'alamat',
     ];
+
+    
+    public function nilaiAlternatif()
+    {
+        return $this->hasMany(NilaiAlternatif::class);
+    }
+
+    public function periode()
+    {
+        return $this->hasmany(Periode::class);
+    }
 }

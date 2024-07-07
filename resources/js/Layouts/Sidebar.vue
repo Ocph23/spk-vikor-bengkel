@@ -12,27 +12,50 @@
               d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z" />
           </svg>
         </template>
-        <template #default class=" cursor-default">Dashboard</template>
+        <template #default class="cursor-default">Dashboard</template>
       </fwb-sidebar-item>
 
       <FwbSidebarItem @click="goto('/kriteria')" link="">
         <template #icon>
-          <VTProfileIcon></VTProfileIcon>
+          <VTListIcon></VTListIcon>
         </template>
-        <template #default class=" cursor-default">Kriteria</template>
+        <template #default class="cursor-default">Kriteria</template>
       </FwbSidebarItem>
       <fwb-sidebar-item @click="goto('/kriteria/bobot')">
         <template #icon>
-         <VTSubMenuIcon></VTSubMenuIcon>
+          <VTEcosystemIcon></VTEcosystemIcon>
+      
         </template>
-        <template #default class=" cursor-default">Bobot Kriteria</template>
+        <template #default class="cursor-default">Bobot Kriteria</template>
         <template #suffix> </template>
       </fwb-sidebar-item>
       <fwb-sidebar-item @click="goto('/subkriteria')">
         <template #icon>
          <VTSubMenuIcon></VTSubMenuIcon>
         </template>
-        <template #default class=" cursor-default">Sub Kriteria</template>
+        <template #default class="cursor-default">Sub Kriteria</template>
+        <template #suffix> </template>
+      </fwb-sidebar-item>
+      <fwb-sidebar-item @click="goto('/periode')">
+        <template #icon>
+         <VTCalendarIcon></VTCalendarIcon>
+        </template>
+        <template #default class="cursor-default">Periode</template>
+        <template #suffix> </template>
+      </fwb-sidebar-item>
+      <fwb-sidebar-item @click="goto('/alternatif')">
+        <template #icon>
+          <VTProfileIcon></VTProfileIcon>
+        </template>
+        <template #default class="cursor-default">Karyawan</template>
+        <template #suffix> </template>
+      </fwb-sidebar-item>
+     
+      <fwb-sidebar-item @click="goto('/penilaian')">
+        <template #icon>
+          <IconCommunity></IconCommunity>
+        </template>
+        <template #default class="cursor-default">Penilaian</template>
         <template #suffix> </template>
       </fwb-sidebar-item>
      
@@ -41,7 +64,8 @@
 </template>
 <script setup lang="ts">
 import { FwbSidebar, FwbSidebarItem, FwbSidebarDropdownItem } from 'flowbite-vue';
-import { VTDosenIcon, VTMahasiswaIcon, VTPelengkapIcon, VTPerkuliahanIcon, VTProfileIcon, VTRekapitulasiIcon, VTSubMenuIcon } from "@/icons";
+import { VTCalendarIcon, VTCheckIcon, VTDosenIcon, VTEcosystemIcon, VTProfileIcon, VTRoleIcon, VTSubMenuIcon, VTToolingIcon, VTListIcon } from "@/icons";
+import IconCommunity from '@/icons/IconCommunity.vue';
 
 function goto(params:string) {
   window.location.href = params;

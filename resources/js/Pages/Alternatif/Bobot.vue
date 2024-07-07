@@ -110,14 +110,14 @@ watch(totalBobot, (val) => {
                         <fwb-table-head-cell>No</fwb-table-head-cell>
                         <fwb-table-head-cell>Nama Kriteria</fwb-table-head-cell>
                         <fwb-table-head-cell>Variabel</fwb-table-head-cell>
-                        <fwb-table-head-cell class="w-40">Bobot Kriteria</fwb-table-head-cell>
+                        <fwb-table-head-cell>Bobot Kriteria</fwb-table-head-cell>
                     </fwb-table-head>
                     <fwb-table-body>
                         <fwb-table-row v-for="(item, index) in datax">
                             <fwb-table-cell>{{ index + 1 }}</fwb-table-cell>
                             <fwb-table-cell>{{ item.nama }}</fwb-table-cell>
                             <fwb-table-cell>{{ item.variabel }}</fwb-table-cell>
-                            <fwb-table-cell class="!w-32">
+                            <fwb-table-cell class=" w-32">
                                 <fwb-input type="number" v-model="item.bobot" />
                             </fwb-table-cell>
                         </fwb-table-row>
