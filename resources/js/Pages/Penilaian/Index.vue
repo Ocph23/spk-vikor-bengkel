@@ -15,7 +15,9 @@ import {
     FwbButton,
     FwbModal,
     FwbInput,
-    FwbSelect
+    FwbSelect,
+    FwbCard,
+    FwbHeading
 } from 'flowbite-vue'
 import IconDelete from '@/icons/IconDelete.vue';
 import IconEdit from '@/icons/IconEdit.vue';
@@ -48,8 +50,9 @@ const props = defineProps({
 })
 
 const periodeSelected = ref(props.periodeAktif);
+const dataAlternatif = ref([] as any[]);
 
-const isShowModal=ref(false);
+const isShowModal = ref(false);
 
 const periodeOptions = props.periode.map((item: any) => {
     return {
@@ -85,14 +88,14 @@ const hitung = () => {
 
     ///Collecting Data
 
-    const dataAlternatif: any[] = [];
+
     props.alternatif.forEach((element: any) => {
         const nilaiPilihan = element.nilai_alternatif.filter(x => x.periode_id == periodeSelected.value.id);
         const fixNilai = nilaiPilihan.map((item: any) => {
             let subkriteria = allSubKriteria.find(x => x.id == item.sub_kriteria_id);
             return subkriteria;
         });
-        dataAlternatif.push({ id: element.id, nama: element.nama, nilai: fixNilai })
+        dataAlternatif.value.push({ id: element.id, nama: element.nama, nilai: fixNilai })
     });
 
 
@@ -100,7 +103,7 @@ const hitung = () => {
     //Calculate W=1
     props.kriteria.forEach(kriteria => {
         kriteria.W = kriteria.bobot / totalBobotKriteria;
-        var dataNilai: number[] = dataAlternatif.map(item => {
+        var dataNilai: number[] = dataAlternatif.value.map(item => {
             var r = item.nilai.find((x: any) => x && x.kriteria_id == kriteria.id);
             if (r) {
                 return r.bobot
@@ -119,7 +122,7 @@ const hitung = () => {
 
     //Normalisasi 
 
-    dataAlternatif.forEach(al => {
+    dataAlternatif.value.forEach(al => {
         al.nilaiNormal = [];
         props.kriteria.forEach(kr => {
             let nilai = al.nilai.find((x: any) => x && x.kriteria_id == kr.id);
@@ -137,15 +140,15 @@ const hitung = () => {
 
 
     //hitung nilai minmax r minmax s
-    let rMin = dataAlternatif.map(x => x.R).min();
-    let sMin = dataAlternatif.map(x => x.S).min();
+    let rMin = dataAlternatif.value.map(x => x.R).min();
+    let sMin = dataAlternatif.value.map(x => x.S).min();
 
-    let rMax = dataAlternatif.map(x => x.R).max();
-    let sMax = dataAlternatif.map(x => x.S).max();
+    let rMax = dataAlternatif.value.map(x => x.R).max();
+    let sMax = dataAlternatif.value.map(x => x.S).max();
 
     const V = 0.5;
 
-    dataAlternatif.forEach(al => {
+    dataAlternatif.value.forEach(al => {
         al.Q = ((al.S - sMin) / (sMax - sMin) * V) + ((al.R - rMin) / (rMax - rMin) * V);
     });
 
@@ -168,7 +171,9 @@ const hitung = () => {
     console.log('sMax :', sMax);
 
 
-    isShowModal.value = true;
+    setTimeout(() => {
+        isShowModal.value = true;
+    }, 1000);
 }
 
 const closeModal = () => {
@@ -300,6 +305,7 @@ const getModel = (alternatif: any, item2: any) => {
                     </fwb-table-head>
                     <fwb-table-body>
                         <fwb-table-row v-for="(item, index) in alternatif">
+
                             <fwb-table-cell>{{ index + 1 }}</fwb-table-cell>
                             <fwb-table-cell>{{ item.nama }}</fwb-table-cell>
                             <fwb-table-cell v-for="item2 in kriteria">
@@ -310,14 +316,133 @@ const getModel = (alternatif: any, item2: any) => {
                     </fwb-table-body>
                 </fwb-table>
             </div>
-            <fwb-modal v-if="isShowModal" @close="closeModal"  size="7xl" persistent >
+            <fwb-modal v-if="isShowModal" @close="closeModal" size="7xl" persistent>
                 <template #header>
                     <div class="flex items-center text-lg">
-                       HASIL PERHITUNGAN
+                        HASIL PERHITUNGAN
                     </div>
                 </template>
                 <template #body>
-                   
+                    <div>
+                        <FwbHeading tag="h5" class="mb-3">DATA NILAI ALTERNATIF PADA SETIAP KRITERIA</FwbHeading>
+                        <fwb-table>
+                            <fwb-table-head>
+                                <fwb-table-head-cell>No</fwb-table-head-cell>
+                                <fwb-table-head-cell>Nama</fwb-table-head-cell>
+                                <fwb-table-head-cell class="text-center" v-for="item in kriteria">{{ item.nama }} ({{
+                                    item.variabel
+                                    }})</fwb-table-head-cell>
+
+                            </fwb-table-head>
+                            <fwb-table-body>
+                                <fwb-table-row v-for="(item, index) in dataAlternatif" :key="index">
+                                    <fwb-table-cell>{{ index + 1 }} </fwb-table-cell>
+                                    <fwb-table-cell>{{ item.nama }}</fwb-table-cell>
+                                    <fwb-table-cell v-for="n in item.nilai" :key="item.id">
+                                        <div class="w-full flex justify-center">
+                                            {{ n.bobot }}
+                                        </div>
+                                    </fwb-table-cell>
+                                </fwb-table-row>
+                                <fwb-table-row>
+                                    <fwb-table-cell colspan="2">Bobot</fwb-table-cell>
+                                    <fwb-table-cell v-for="n in kriteria" :key="n.id">
+                                        <div class="w-full flex justify-center">
+                                            {{ n.bobot }} %
+                                        </div>
+                                    </fwb-table-cell>
+                                </fwb-table-row>
+                                <fwb-table-row>
+                                    <fwb-table-cell colspan="2">W=1</fwb-table-cell>
+                                    <fwb-table-cell v-for="n in kriteria" :key="n.id">
+                                        <div class="w-full flex justify-center">
+                                            {{ n.W }}
+                                        </div>
+                                    </fwb-table-cell>
+                                </fwb-table-row>
+                            </fwb-table-body>
+                        </fwb-table>
+
+                        <FwbHeading tag="h5" class="my-3 mt-10">NORMALISASI</FwbHeading>
+                        <fwb-table>
+                            <fwb-table-head>
+                                <fwb-table-head-cell>No</fwb-table-head-cell>
+                                <fwb-table-head-cell>Nama</fwb-table-head-cell>
+                                <fwb-table-head-cell class="text-center" v-for="item in kriteria">{{ item.nama }} ({{
+                                    item.variabel
+                                    }})</fwb-table-head-cell>
+
+                            </fwb-table-head>
+                            <fwb-table-body>
+
+                                <fwb-table-row v-for="(item, index) in dataAlternatif" :key="index">
+                                    <fwb-table-cell>{{ index + 1 }} </fwb-table-cell>
+                                    <fwb-table-cell>{{ item.nama }}</fwb-table-cell>
+                                    <fwb-table-cell v-for="n in item.nilaiNormal" :key="item.id">
+                                        <div class="w-full flex justify-center">
+                                            {{ Math.ceil(n.R) }}
+                                        </div>
+                                    </fwb-table-cell>
+
+                                </fwb-table-row>
+
+
+                            </fwb-table-body>
+                        </fwb-table>
+
+                        <FwbHeading tag="h5" class="my-3 mt-10">Menghitung Nilai S Dan R</FwbHeading>
+                        <fwb-table>
+                            <fwb-table-head>
+                                <fwb-table-head-cell>No</fwb-table-head-cell>
+                                <fwb-table-head-cell>Nama</fwb-table-head-cell>
+                                <fwb-table-head-cell class="text-center" v-for="item in kriteria">{{ item.nama }} ({{
+                                    item.variabel
+                                    }})</fwb-table-head-cell>
+                                <fwb-table-head-cell>Nilai S</fwb-table-head-cell>
+                                <fwb-table-head-cell>Nilai R</fwb-table-head-cell>
+
+                            </fwb-table-head>
+                            <fwb-table-body>
+                                <fwb-table-row v-for="(item, index) in dataAlternatif" :key="index">
+                                    <fwb-table-cell>{{ index + 1 }} </fwb-table-cell>
+                                    <fwb-table-cell>{{ item.nama }}</fwb-table-cell>
+                                    <fwb-table-cell v-for="n in item.nilaiNormal" :key="item.id">
+                                        <div class="w-full flex justify-center">
+                                            {{ n.S }}
+                                        </div>
+                                    </fwb-table-cell>
+                                    <fwb-table-cell>{{ item.S }}</fwb-table-cell>
+                                    <fwb-table-cell>{{ item.R }}</fwb-table-cell>
+                                </fwb-table-row>
+
+                            </fwb-table-body>
+                        </fwb-table>
+
+                        <FwbHeading tag="h5" class="my-3 mt-10">Menghitung Nilai R</FwbHeading>
+                        <fwb-table>
+                            <fwb-table-head>
+                                <fwb-table-head-cell>No</fwb-table-head-cell>
+                                <fwb-table-head-cell>Nama</fwb-table-head-cell>
+                                <fwb-table-head-cell class="text-center" v-for="item in kriteria">{{ item.nama }} ({{
+                                    item.variabel
+                                    }})</fwb-table-head-cell>
+
+                            </fwb-table-head>
+                            <fwb-table-body>
+
+                                <fwb-table-row v-for="(item, index) in dataAlternatif" :key="index">
+                                    <fwb-table-cell>{{ index + 1 }} </fwb-table-cell>
+                                    <fwb-table-cell>{{ item.nama }}</fwb-table-cell>
+                                    <fwb-table-cell v-for="n in item.nilaiNormal" :key="item.id">
+                                        <div class="w-full flex justify-center">
+                                            {{ n.S }}
+                                        </div>
+                                    </fwb-table-cell>
+                                </fwb-table-row>
+
+                            </fwb-table-body>
+                        </fwb-table>
+                    </div>
                 </template>
                 <template #footer>
                     <div class="flex justify-end">
