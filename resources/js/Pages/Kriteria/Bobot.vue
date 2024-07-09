@@ -19,11 +19,12 @@ import {
 } from 'flowbite-vue'
 import IconDelete from '@/icons/IconDelete.vue';
 import IconEdit from '@/icons/IconEdit.vue';
+import { Kriteria } from '@/models';
 
 
 const props = defineProps({
     data: {
-        type: Array,
+        type: Array<Kriteria>,
         required: true
     }
 })
@@ -34,7 +35,7 @@ const isBusy = ref(false);
 const saveAction = () => {
     isBusy.value= true;
     const form = useForm(datax.value);
-    if (form.id <= 0 || form.id == undefined) {
+    if (form) {
         form.post(route('kriteria.bobot'), {
             onSuccess: (res:any) => {
                 Swal.fire({

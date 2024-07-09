@@ -18,11 +18,12 @@ import {
 } from 'flowbite-vue'
 import IconDelete from '@/icons/IconDelete.vue';
 import IconEdit from '@/icons/IconEdit.vue';
+import { Kriteria } from '@/models';
 
 
 const props = defineProps({
     data: {
-        type: Array,
+        type: Array<Kriteria>,
         required: true
     }
 })
@@ -57,7 +58,7 @@ function deleteItem(item: any) {
                         icon: "success"
                     });
 
-                }, onError: (err) => {
+                }, onError: (err:any) => {
                     Swal.fire({
                         title: "Error",
                         text: err,

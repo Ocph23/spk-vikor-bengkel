@@ -17,6 +17,7 @@ import {
     FwbInput,
     FwbTextarea
 } from 'flowbite-vue'
+import { Kriteria } from '@/models';
 
 const isBusy = ref(false)
 
@@ -25,7 +26,7 @@ const form = useForm({
     nama: '',
     variabel: '',
     keterangan: ''
-})
+} as unknown as Kriteria)
 
 const props = defineProps({
     data: {
@@ -43,10 +44,9 @@ onMounted(() => {
 })
 
 
-
 const saveAction = () => {
     console.log('test');
-    if (form.id <= 0 || form.id == undefined) {
+    if (form.id == null || form.id == undefined  || form.id <= 0 ) {
         form.post(route('kriteria.store'), {
             onSuccess: (res) => {
                 Swal.fire({
@@ -120,13 +120,15 @@ const backAction = () => {
                     <div class=" mb-8 flex items-center text-lg">
                         Tambah/Edit Kriteria
                     </div>
-                    <form >
+                    <form>
                         <div class="mb-6">
-                            <fwb-input :disabled="isBusy" v-model="form.nama" required placeholder="Kriteria" label="Nama Kriteria" />
+                            <fwb-input :disabled="isBusy" v-model="form.nama" required placeholder="Kriteria"
+                                label="Nama Kriteria" />
                             <InputError :message="form.errors['nama']" />
                         </div>
                         <div class="mb-6">
-                            <fwb-input :disabled="isBusy" v-model="form.variabel" placeholder="Variable" label="Variabel" />
+                            <fwb-input :disabled="isBusy" v-model="form.variabel" placeholder="Variable"
+                                label="Variabel" />
                             <InputError :message="form.errors['variabel']" />
                         </div>
                         <div class="mb-6">
@@ -138,7 +140,7 @@ const backAction = () => {
                         <fwb-button @click="backAction" color="alternative">
                             Batal
                         </fwb-button>
-                        
+
                         <fwb-button color="green" @click="saveAction">
                             Simpan
                         </fwb-button>

@@ -22,7 +22,7 @@ import {
 import IconDelete from '@/icons/IconDelete.vue';
 import IconEdit from '@/icons/IconEdit.vue';
 import PenilaianSelect from '@/Components/PenilaianSelect.vue';
-import { Kriteria } from '@/models';
+import { Alternatif, Kriteria, Periode } from '@/models';
 import { VTIconPrint } from '@/icons';
 import IconPrint from '@/icons/IconPrint.vue';
 
@@ -34,7 +34,7 @@ const props = defineProps({
         required: true
     },
     periode: {
-        type: Array,
+        type: Array<Periode>,
         required: true
     },
     kriteria: {
@@ -42,7 +42,7 @@ const props = defineProps({
         required: true
     },
     alternatif: {
-        type: Array,
+        type: Array<Alternatif>,
         required: true
     },
     periodeAktif: {
@@ -71,6 +71,14 @@ const getAllSubKriteria = () => {
     return datas;
 }
 
+declare global {
+  interface Array<T>  {
+    max(): T;
+    min(): T;
+  }
+}
+
+
 Array.prototype.max = function () {
     return Math.max.apply(null, this);
 };
@@ -79,7 +87,7 @@ Array.prototype.min = function () {
     return Math.min.apply(null, this);
 };
 
-function rank(arr: [], f: any) {
+function rank(arr: number [], f: any) {
     return arr
         .map((x, i) => [x, i])
         .sort((a, b) => f(a[0], b[0]))
@@ -108,7 +116,7 @@ const hitung = () => {
 
 
     props.alternatif.forEach((element: any) => {
-        const nilaiPilihan = element.nilai_alternatif.filter(x => x.periode_id == periodeSelected.value.id);
+        const nilaiPilihan = element.nilai_alternatif.filter((x:any) => x.periode_id == periodeSelected.value.id);
         const fixNilai = nilaiPilihan.map((item: any) => {
             let subkriteria = allSubKriteria.find(x => x.id == item.sub_kriteria_id);
             return subkriteria;
@@ -171,7 +179,7 @@ const hitung = () => {
     });
 
 
-    let arrayOfQ = dataAlternatif.value.map(x => x.Q);
+    let arrayOfQ:number[] = dataAlternatif.value.map(x => x.Q);
     ranking = rank(arrayOfQ, (a: number, b: number) => a - b)
 
 
@@ -206,7 +214,7 @@ const saveAction = () => {
         periode: props.periodeAktif,
         penilaian: props.alternatif
     })
-    if (form.id <= 0 || form.id == undefined) {
+    if (form) {
         form.post(route('penilaian.store'), {
             onSuccess: (res) => {
                 Swal.fire({
@@ -560,3 +568,4 @@ const getModel = (alternatif: any, item2: any) => {
         </table>
     </div>
 </template>
+

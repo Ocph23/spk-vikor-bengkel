@@ -18,11 +18,12 @@ import {
 } from 'flowbite-vue'
 import IconDelete from '@/icons/IconDelete.vue';
 import IconEdit from '@/icons/IconEdit.vue';
+import { Periode } from '@/models';
 
 
 const props = defineProps({
     data: {
-        type: Array,
+        type: Array<Periode>,
         required: true
     }
 })

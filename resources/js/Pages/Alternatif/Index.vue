@@ -18,11 +18,12 @@ import {
 } from 'flowbite-vue'
 import IconDelete from '@/icons/IconDelete.vue';
 import IconEdit from '@/icons/IconEdit.vue';
+import { Alternatif } from '@/models';
 
 
 const props = defineProps({
     data: {
-        type: Array,
+        type: Array<Alternatif>,
         required: true
     }
 })
@@ -57,7 +58,7 @@ function deleteItem(item: any) {
                         icon: "success"
                     });
 
-                }, onError: (err) => {
+                }, onError: (err:any) => {
                     Swal.fire({
                         title: "Error",
                         text: err,
@@ -103,7 +104,7 @@ function deleteItem(item: any) {
                         <fwb-table-row v-for="(item, index) in data">
                             <fwb-table-cell>{{ index + 1 }}</fwb-table-cell>
                             <fwb-table-cell>{{ item.nama }}</fwb-table-cell>
-                            <fwb-table-cell>{{ item.jenis_kelamin }}</fwb-table-cell>
+                            <fwb-table-cell>{{ item.jenis_kelamin=='P'? 'Perempuan' : 'Laki-laki' }}</fwb-table-cell>
                             <fwb-table-cell>{{ item.alamat }}</fwb-table-cell>
                             <fwb-table-cell>
                               <div class="flex space-x-2 justify-end">

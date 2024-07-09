@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import { defineProps, ref } from 'vue';
 import Swal from 'sweetalert2';
 
@@ -22,27 +22,29 @@ import {
 import IconDelete from '@/icons/IconDelete.vue';
 import IconEdit from '@/icons/IconEdit.vue';
 import axios from 'axios';
+import { Kriteria, ResponseRequest, SubKriteria } from '@/models';
 
 
 const props = defineProps({
     kriteria: {
-        type: Array,
+        type: Array<Kriteria>,
         required: true
     }
 })
 
-let form = {
-    id: 0,
+let model: SubKriteria = {
     nama: '',
     keterangan: '',
-    bobot: '',
+    bobot: 0,
+    kriteria_id: 0,
+    id: 0,
     errors: []
 };
 
 const isBusy = ref(false);
 const kriteriaId = ref(0);
 
-let listSubkriteria = ref([]);
+let listSubkriteria = ref([] as SubKriteria[]);
 
 const kriteriaOption = props.kriteria.map((item: any) => {
     return {
@@ -74,14 +76,15 @@ function closeModal() {
 }
 function showModal(param: any) {
     if (param) {
-        form = param
+        model = param
     } else {
-        form = {
+        model = {
             id: 0,
             nama: '',
             kriteria_id: kriteriaId.value,
             keterangan: '',
             bobot: 0,
+            errors:[]
         };
     }
     isShowModal.value = true
@@ -89,8 +92,8 @@ function showModal(param: any) {
 
 
 const saveAction = () => {
-    if (form.id <= 0 || form.id == undefined) {
-        axios.post('/api/subkriteria', form).then((response: any) => {
+    if (model.id <= 0 || model.id == undefined) {
+        axios.post('/api/subkriteria', model).then((response:ResponseRequest) => {
             Swal.fire({
                 position: "top-end",
                 icon: "success",
@@ -98,7 +101,8 @@ const saveAction = () => {
                 showConfirmButton: false,
                 timer: 1500
             });
-            listSubkriteria.value.push(response.data.data);
+            let item = response.data as SubKriteria;
+            listSubkriteria.value.push(response.data as SubKriteria);
             closeModal()
         }).catch((err: any) => {
             Swal.fire({
@@ -110,7 +114,7 @@ const saveAction = () => {
             });
         })
     } else {
-        axios.put('/api/subkriteria/' + form.id, form).then((response: any) => {
+        axios.put('/api/subkriteria/' + model.id, model).then((response: any) => {
             Swal.fire({
                 position: "top-end",
                 icon: "success",
@@ -220,7 +224,7 @@ function deleteItem(item: any) {
         <fwb-modal persistent v-if="isShowModal" @close="closeModal">
             <template #header>
                 <div class=" mb-8 flex items-center text-lg">
-                        Tambah/Edit Kriteria
+                        Tambah/Edit Sub Kriteria
                     </div>
             </template>
             <template #body>
@@ -228,18 +232,18 @@ function deleteItem(item: any) {
                    
                     <form>
                         <div class="mb-6">
-                            <fwb-input :disabled="isBusy" v-model="form.nama" required placeholder="Sub Kriteria"
+                            <fwb-input :disabled="isBusy" v-model="model.nama" required placeholder="Sub Kriteria"
                                 label="Nama Sub Kriteria" />
-                            <InputError :message="form.errors ? form.errors['nama'] : ''" />
+                            <!-- <InputError :message="model.errors ? model.errors['nama'] : ''" /> -->
                         </div>
                         <div class="mb-6">
-                            <FwbTextarea v-model="form.keterangan" placeholder="Keterangan" label="Keterangan" />
-                            <InputError :message="form.errors ? form.errors['keterangan'] : ''" />
+                            <FwbTextarea v-model="model.keterangan" placeholder="Keterangan" label="Keterangan" />
+                            <!-- <InputError :message="model.errors ? model.errors['keterangan'] : ''" /> -->
                         </div>
                         <div class="mb-6">
-                            <fwb-input type="number" :disabled="isBusy" v-model="form.bobot" placeholder="Bobot"
+                            <fwb-input type="number" :disabled="isBusy" v-model="model.bobot" placeholder="Bobot"
                                 label="Bobot" />
-                            <InputError :message="form.errors ? form.errors['bobot'] : ''" />
+                            <!-- <InputError :message="model.errors ? model.errors['bobot'] : ''" /> -->
                         </div>
                     </form>
 
