@@ -4,6 +4,7 @@ import { Head } from '@inertiajs/vue3';
 </script>
 
 <template>
+
     <Head title="Dashboardx" />
     <AuthenticatedLayout>
         <template #header>
@@ -12,8 +13,13 @@ import { Head } from '@inertiajs/vue3';
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">You're logged in!</div>
+                <div class="p-10 bg-white overflow-hidden shadow-sm sm:rounded-lg flex justify-center items-center">
+                    <img class=" w-36 h-36" src="../../../public/logobaru.png" alt="logo" />
+                    <div class="ml-10">
+                        <h1>APLIKASI SISTEM PENDUKUNG KEPUTUSAN SELEKSI</h1>
+                        <h1>PEMBERIAN REWARD BAGI KARYAWAN MENGGUNAKAN METODE VIKOR</h1>
+                        <h1>PADA BENGKEL TOM'S SPEED MOTOR</h1>
+                    </div>
                 </div>
             </div>
         </div>

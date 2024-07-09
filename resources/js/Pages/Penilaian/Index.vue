@@ -23,6 +23,8 @@ import IconDelete from '@/icons/IconDelete.vue';
 import IconEdit from '@/icons/IconEdit.vue';
 import PenilaianSelect from '@/Components/PenilaianSelect.vue';
 import { Kriteria } from '@/models';
+import { VTIconPrint } from '@/icons';
+import IconPrint from '@/icons/IconPrint.vue';
 
 
 
@@ -77,7 +79,23 @@ Array.prototype.min = function () {
     return Math.min.apply(null, this);
 };
 
+function rank(arr: [], f: any) {
+    return arr
+        .map((x, i) => [x, i])
+        .sort((a, b) => f(a[0], b[0]))
+        .reduce((a, x, i, s) => (a[x[1]] =
+            i > 0 && f(s[i - 1][0], x[0]) === 0 ? a[s[i - 1][1]] : i + 1, a), []);
+}
+
+let rMin = 0;
+let sMin = 0;
+let rMax = 0;
+let sMax = 0;
+let ranking: number[] = [];
+
+
 const hitung = () => {
+    dataAlternatif.value = [];
     //total Bobot
     let totalBobotKriteria = props.kriteria.reduce((acc: any, item: any) => {
         return acc + item.bobot
@@ -95,7 +113,7 @@ const hitung = () => {
             let subkriteria = allSubKriteria.find(x => x.id == item.sub_kriteria_id);
             return subkriteria;
         });
-        dataAlternatif.value.push({ id: element.id, nama: element.nama, nilai: fixNilai })
+        dataAlternatif.value.push({ id: element.id, nama: element.nama, jeniskelamin: element.jenis_kelamin, nilai: fixNilai })
     });
 
 
@@ -140,11 +158,11 @@ const hitung = () => {
 
 
     //hitung nilai minmax r minmax s
-    let rMin = dataAlternatif.value.map(x => x.R).min();
-    let sMin = dataAlternatif.value.map(x => x.S).min();
+    rMin = dataAlternatif.value.map(x => x.R).min();
+    sMin = dataAlternatif.value.map(x => x.S).min();
 
-    let rMax = dataAlternatif.value.map(x => x.R).max();
-    let sMax = dataAlternatif.value.map(x => x.S).max();
+    rMax = dataAlternatif.value.map(x => x.R).max();
+    sMax = dataAlternatif.value.map(x => x.S).max();
 
     const V = 0.5;
 
@@ -153,7 +171,8 @@ const hitung = () => {
     });
 
 
-
+    let arrayOfQ = dataAlternatif.value.map(x => x.Q);
+    ranking = rank(arrayOfQ, (a: number, b: number) => a - b)
 
 
     ///Nilai index /Q
@@ -218,6 +237,10 @@ const saveAction = () => {
 }
 
 
+const print = () => {
+    window.print();
+}
+
 const form = useForm({
     id: 0
 })
@@ -276,22 +299,37 @@ const getModel = (alternatif: any, item2: any) => {
 
 </script>
 
+<style>
+.print {
+    display: none;
+}
+
+@media print {
+    .print {
+        display: block;
+    }
+
+    .noprint {
+        display: none
+    }
+}
+</style>
+
 <template>
 
     <Head title="Kriteria" />
-    <AuthenticatedLayout>
+    <AuthenticatedLayout class="noprint">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Dashboardx</h2>
         </template>
         <div class="py-6 max-w-7xl mx-auto sm:px-6 lg:px-8">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">DATA PENILAIAN</h2>
             <div class="my-5 flex justify-between">
-                <FwbSelect :options="periodeOptions" v-model="periodeSelected" placeholder="Pilih Periode">
-                </FwbSelect>
+                <FwbSelect :options="periodeOptions" v-model="periodeSelected" placeholder="Pilih Periode"></FwbSelect>
                 <div class="gap-1 flex">
                     <fwb-button @click="saveAction" color="green"
                         :disabled="!periodeSelected.status">Simpan</fwb-button>
-                    <fwb-button @click="hitung" color="green">Hasil Analisa</fwb-button>
+                    <fwb-button @click="hitung" color="yellow" >Analisa</fwb-button>
                 </div>
             </div>
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -318,8 +356,23 @@ const getModel = (alternatif: any, item2: any) => {
             </div>
             <fwb-modal v-if="isShowModal" @close="closeModal" size="7xl" persistent>
                 <template #header>
-                    <div class="flex items-center text-lg">
-                        HASIL PERHITUNGAN
+                    <div class=" w-full flex justify-between text-lg">
+                        <div>HASIL PERHITUNGAN</div>
+                        <div class="flex gap-1">
+                            <div class="flex justify-end">
+                                <fwb-button @click="print" color="yellow">
+                                    <div class="flex">
+                                        <IconPrint class="cursor-pointer text-yellow-200 mr-2" />
+                                        Print
+                                    </div>
+                                </fwb-button>
+                            </div>
+                            <div class="flex justify-end">
+                                <fwb-button @click="closeModal" color="green">
+                                    Keluar
+                                </fwb-button>
+                            </div>
+                        </div>
                     </div>
                 </template>
                 <template #body>
@@ -331,7 +384,7 @@ const getModel = (alternatif: any, item2: any) => {
                                 <fwb-table-head-cell>Nama</fwb-table-head-cell>
                                 <fwb-table-head-cell class="text-center" v-for="item in kriteria">{{ item.nama }} ({{
                                     item.variabel
-                                    }})</fwb-table-head-cell>
+                                }})</fwb-table-head-cell>
 
                             </fwb-table-head>
                             <fwb-table-body>
@@ -340,7 +393,7 @@ const getModel = (alternatif: any, item2: any) => {
                                     <fwb-table-cell>{{ item.nama }}</fwb-table-cell>
                                     <fwb-table-cell v-for="n in item.nilai" :key="item.id">
                                         <div class="w-full flex justify-center">
-                                            {{ n.bobot }}
+                                            {{ n.bobot.toFixed(2) }}
                                         </div>
                                     </fwb-table-cell>
                                 </fwb-table-row>
@@ -348,7 +401,7 @@ const getModel = (alternatif: any, item2: any) => {
                                     <fwb-table-cell colspan="2">Bobot</fwb-table-cell>
                                     <fwb-table-cell v-for="n in kriteria" :key="n.id">
                                         <div class="w-full flex justify-center">
-                                            {{ n.bobot }} %
+                                            {{ n.bobot.toFixed(2) }} %
                                         </div>
                                     </fwb-table-cell>
                                 </fwb-table-row>
@@ -356,7 +409,7 @@ const getModel = (alternatif: any, item2: any) => {
                                     <fwb-table-cell colspan="2">W=1</fwb-table-cell>
                                     <fwb-table-cell v-for="n in kriteria" :key="n.id">
                                         <div class="w-full flex justify-center">
-                                            {{ n.W }}
+                                            {{ n.W.toFixed(2) }}
                                         </div>
                                     </fwb-table-cell>
                                 </fwb-table-row>
@@ -370,7 +423,7 @@ const getModel = (alternatif: any, item2: any) => {
                                 <fwb-table-head-cell>Nama</fwb-table-head-cell>
                                 <fwb-table-head-cell class="text-center" v-for="item in kriteria">{{ item.nama }} ({{
                                     item.variabel
-                                    }})</fwb-table-head-cell>
+                                }})</fwb-table-head-cell>
 
                             </fwb-table-head>
                             <fwb-table-body>
@@ -380,7 +433,7 @@ const getModel = (alternatif: any, item2: any) => {
                                     <fwb-table-cell>{{ item.nama }}</fwb-table-cell>
                                     <fwb-table-cell v-for="n in item.nilaiNormal" :key="item.id">
                                         <div class="w-full flex justify-center">
-                                            {{ Math.ceil(n.R) }}
+                                            {{ n.R.toFixed(2) }}
                                         </div>
                                     </fwb-table-cell>
 
@@ -397,7 +450,7 @@ const getModel = (alternatif: any, item2: any) => {
                                 <fwb-table-head-cell>Nama</fwb-table-head-cell>
                                 <fwb-table-head-cell class="text-center" v-for="item in kriteria">{{ item.nama }} ({{
                                     item.variabel
-                                    }})</fwb-table-head-cell>
+                                }})</fwb-table-head-cell>
                                 <fwb-table-head-cell>Nilai S</fwb-table-head-cell>
                                 <fwb-table-head-cell>Nilai R</fwb-table-head-cell>
 
@@ -408,50 +461,102 @@ const getModel = (alternatif: any, item2: any) => {
                                     <fwb-table-cell>{{ item.nama }}</fwb-table-cell>
                                     <fwb-table-cell v-for="n in item.nilaiNormal" :key="item.id">
                                         <div class="w-full flex justify-center">
-                                            {{ n.S }}
+                                            {{ n.S.toFixed(2) }}
                                         </div>
                                     </fwb-table-cell>
-                                    <fwb-table-cell>{{ item.S }}</fwb-table-cell>
-                                    <fwb-table-cell>{{ item.R }}</fwb-table-cell>
+                                    <fwb-table-cell>{{ item.S.toFixed(2) }}</fwb-table-cell>
+                                    <fwb-table-cell>{{ item.R.toFixed(2) }}</fwb-table-cell>
+                                </fwb-table-row>
+                                <fwb-table-row>
+                                    <fwb-table-cell colspan="6">Min</fwb-table-cell>
+                                    <fwb-table-cell>{{ sMin.toFixed(2) }}</fwb-table-cell>
+                                    <fwb-table-cell>{{ rMin.toFixed(2) }}</fwb-table-cell>
+                                </fwb-table-row>
+                                <fwb-table-row>
+                                    <fwb-table-cell colspan="6">Max</fwb-table-cell>
+                                    <fwb-table-cell>{{ sMax.toFixed(2) }}</fwb-table-cell>
+                                    <fwb-table-cell>{{ rMax.toFixed(2) }}</fwb-table-cell>
                                 </fwb-table-row>
 
                             </fwb-table-body>
                         </fwb-table>
 
-                        <FwbHeading tag="h5" class="my-3 mt-10">Menghitung Nilai R</FwbHeading>
+
+                        <FwbHeading tag="h5" class="my-3 mt-10">Hasil Perhitungan</FwbHeading>
                         <fwb-table>
                             <fwb-table-head>
                                 <fwb-table-head-cell>No</fwb-table-head-cell>
                                 <fwb-table-head-cell>Nama</fwb-table-head-cell>
-                                <fwb-table-head-cell class="text-center" v-for="item in kriteria">{{ item.nama }} ({{
-                                    item.variabel
-                                    }})</fwb-table-head-cell>
+                                <fwb-table-head-cell>Jenis Kelamin</fwb-table-head-cell>
+                                <fwb-table-head-cell class="text-center">Nilai Q</fwb-table-head-cell>
+                                <fwb-table-head-cell class="text-center">Ranking</fwb-table-head-cell>
 
                             </fwb-table-head>
                             <fwb-table-body>
-
                                 <fwb-table-row v-for="(item, index) in dataAlternatif" :key="index">
                                     <fwb-table-cell>{{ index + 1 }} </fwb-table-cell>
                                     <fwb-table-cell>{{ item.nama }}</fwb-table-cell>
-                                    <fwb-table-cell v-for="n in item.nilaiNormal" :key="item.id">
+                                    <fwb-table-cell>{{ item.jeniskelamin == 'P' ? 'Perempuan' : 'Laki-laki'
+                                        }}</fwb-table-cell>
+                                    <fwb-table-cell>
                                         <div class="w-full flex justify-center">
-                                            {{ n.S }}
+                                            {{ item.Q.toFixed(2) }}
+                                        </div>
+                                    </fwb-table-cell>
+                                    <fwb-table-cell>
+                                        <div class="w-full flex justify-center">
+                                            {{ ranking[index] }}
                                         </div>
                                     </fwb-table-cell>
                                 </fwb-table-row>
-
                             </fwb-table-body>
                         </fwb-table>
+
                     </div>
                 </template>
                 <template #footer>
-                    <div class="flex justify-end">
-                        <fwb-button @click="closeModal" color="green">
-                            Keluar
-                        </fwb-button>
-                    </div>
+
                 </template>
             </fwb-modal>
         </div>
     </AuthenticatedLayout>
+
+
+    <div class="print">
+        <div class="w-full flex justify-center flex-col items-center my-5">
+            <h1>HASIL SELEKSI PEMBERIAN REWARD</h1>
+            <h1>BAGI KARYAWAN BENGKEL TOM SPEED MOTOR</h1>
+            <h1>PERIODE {{ periodeAktif.nama }}</h1>
+        </div>
+        <table class="table-auto w-full text-sm">
+            <thead>
+                <tr>
+                    <th class="p-2 border border-gray-300 text-left">No</th>
+                    <th class="p-2 border border-gray-300 text-left">Nama</th>
+                    <th class="p-2 border border-gray-300 text-left">Jenis Kelamin</th>
+                    <th class="p-2 border border-gray-300 text-center">Nilai Q</th>
+                    <th class="p-2 border border-gray-300 text-center">Ranking</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(item, index) in dataAlternatif" :key="index">
+                    <td class=" text-sm p-2 border border-gray-300 text-left">{{ index + 1 }} </td>
+                    <td class=" text-sm p-2 border border-gray-300 text-left">{{ item.nama }}</td>
+                    <td class=" text-sm p-2 border border-gray-300 text-left">{{ item.jeniskelamin == 'P' ? 'Perempuan' :
+                        'Laki-laki'
+                        }}</td>
+                    <td class=" text-sm p-2 border border-gray-300 text-left">
+                        <div class="w-full flex justify-center">
+                            {{ item.Q.toFixed(2) }}
+                        </div>
+                    </td>
+                    <td class=" text-sm p-2 border border-gray-300 text-left">
+                        <div class="w-full flex justify-center">
+                            {{ ranking[index] }}
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </template>

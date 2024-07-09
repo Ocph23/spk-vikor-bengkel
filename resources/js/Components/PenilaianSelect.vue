@@ -15,7 +15,7 @@ const props = defineProps({
 
 const subkriteriaOption = props.kriteria.subkriteria.map((sub: any) => {
     return {
-        name: `${sub.nama} - bobot: ${sub.bobot}`,
+        name: `${sub.nama}`,
         value: sub.id
     }
 });
