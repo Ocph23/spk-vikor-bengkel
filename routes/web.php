@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/kriteria/bobot', [KriteriaController::class, 'storeBobot'])->name('kriteria.storeBobot');
 
-    Route::get('/subkriteria', [SubKriteriaController::class, 'index'])->name('subkriteria.store');
+    Route::get('/subkriteria', [SubKriteriaController::class, 'index'])->name('subkriteria.create');
 
     Route::post('/subkriteria', [SubKriteriaController::class, 'store'])->name('subkriteria.store');
     Route::get('/subkriteria/{id}', [SubKriteriaController::class, 'edit'])->name('subkriteria.edit');
