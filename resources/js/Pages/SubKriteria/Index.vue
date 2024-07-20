@@ -98,7 +98,7 @@ function showModal(param: any) {
 
 const saveAction = () => {
     if (model.id <= 0 || model.id == undefined) {
-        axios.post('/api/subkriteria', model).then((response:ResponseRequest) => {
+        axios.post('/api/subkriteria', model).then((response) => {
             Swal.fire({
                 position: "top-end",
                 icon: "success",
@@ -106,18 +106,20 @@ const saveAction = () => {
                 showConfirmButton: false,
                 timer: 1500
             });
-            let item = response.data.data as SubKriteria;
+            const item = response.data.data as SubKriteria;
             listSubkriteria.value.push(item);
             closeModal()
         }).catch((err: any) => {
             error.value.errors = err.response.data.errors;
-            Swal.fire({
-                position: "top-end",
-                icon: "error",
-                title: err.response.data.message,
-                showConfirmButton: false,
-                timer: 1500
-            });
+            if(!error.value.errors){
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    title: err.response.data.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
         })
     } else {
         axios.put('/api/subkriteria/' + model.id, model).then((response: any) => {
