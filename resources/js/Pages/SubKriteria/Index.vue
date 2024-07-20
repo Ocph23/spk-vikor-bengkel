@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { defineProps, ref } from 'vue';
+import { defineProps, reactive, ref } from 'vue';
 import Swal from 'sweetalert2';
 
 import {
@@ -23,6 +23,8 @@ import IconDelete from '@/icons/IconDelete.vue';
 import IconEdit from '@/icons/IconEdit.vue';
 import axios from 'axios';
 import { Kriteria, ResponseRequest, SubKriteria } from '@/models';
+import InputError from '../../Components/InputError.vue';
+
 
 
 const props = defineProps({
@@ -31,6 +33,9 @@ const props = defineProps({
         required: true
     }
 })
+
+
+const error=ref({} as any);
 
 let model: SubKriteria = {
     nama: '',
@@ -101,14 +106,15 @@ const saveAction = () => {
                 showConfirmButton: false,
                 timer: 1500
             });
-            let item = response.data as SubKriteria;
-            listSubkriteria.value.push(response.data as SubKriteria);
+            let item = response.data.data as SubKriteria;
+            listSubkriteria.value.push(item);
             closeModal()
         }).catch((err: any) => {
+            error.value.errors = err.response.data.errors;
             Swal.fire({
                 position: "top-end",
                 icon: "error",
-                title: err,
+                title: err.response.data.message,
                 showConfirmButton: false,
                 timer: 1500
             });
@@ -229,26 +235,24 @@ function deleteItem(item: any) {
             </template>
             <template #body>
                 <div class="p-6 bg-white border-b border-gray-200">
-                   
                     <form>
                         <div class="mb-6">
                             <fwb-input :disabled="isBusy" v-model="model.nama" required placeholder="Sub Kriteria"
                                 label="Nama Sub Kriteria" />
-                            <!-- <InputError :message="model.errors ? model.errors['nama'] : ''" /> -->
+                            <InputError :message="error.errors ? error.errors['nama'] : ''" />
                         </div>
-                        <div class="mb-6">
-                            <FwbTextarea v-model="model.keterangan" placeholder="Keterangan" label="Keterangan" />
-                            <!-- <InputError :message="model.errors ? model.errors['keterangan'] : ''" /> -->
-                        </div>
+                   
                         <div class="mb-6">
                             <fwb-input type="number" :disabled="isBusy" v-model="model.bobot" placeholder="Bobot"
                                 label="Bobot" />
-                            <!-- <InputError :message="model.errors ? model.errors['bobot'] : ''" /> -->
+                            <InputError :message="error.errors ? error.errors['bobot'] : ''" />
+                        </div>
+                        <div class="mb-6">
+                            <FwbTextarea v-model="model.keterangan" placeholder="Keterangan" label="Keterangan" />
+                            <!-- <InputError :message="error.errors ? error.errors['keterangan'] : ''" /> -->
                         </div>
                     </form>
-
                 </div>
-
             </template>
             <template #footer>
                 <div class="flex justify-end gap-2">

@@ -25,7 +25,7 @@ class SubKriteriaRequest extends FormRequest
             'nama'=> 'required',
             'kriteria_id'=> 'required',
             'bobot'=> 'required',
-            'keterangan'=> 'required',
+            'keterangan'=> '',
         ];
     }
 }
