@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama');
             $table->enum('jenis_kelamin',['L', 'P'])->default('L');
-            $table->string('alamat');
+            $table->string('alamat')->nullable();
         });
     }
 

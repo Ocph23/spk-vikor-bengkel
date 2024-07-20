@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('kriteria_id');
             $table->string('nama');
-            $table->string('keterangan');
+            $table->string('keterangan')->nullable();
             $table->integer('bobot')->default(0);;
         });
     }

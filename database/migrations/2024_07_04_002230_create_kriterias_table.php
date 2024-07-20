@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama');
             $table->string('variabel')->unique();
-            $table->string('keterangan');
+            $table->string('keterangan')->nullable();
             $table->integer('bobot')->default(0);
         });
     }
